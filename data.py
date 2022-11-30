@@ -10,9 +10,13 @@ def load_data(n = -1):
     diagnostics = pd.read_excel("data/Diagnostics.xlsx")
     
     # Load Conditions.xlsx
-    conditions = pd.read_excel("data/ConditionNames.xlsx")
+    conditions = pd.read_excel("data/RhythmNames.xlsx")
     n_cond = conditions["Acronym Name"].size
-    cond_map = { conditions["Acronym Name"][i] : i for i in range(n_cond) }
+    cond_map = { conditions["Acronym Name"][i].strip() : i for i in range(n_cond) }
+    
+    # add SA
+    cond_map['SA'] = n_cond 
+    n_cond += 1
     
     # Load Examples from files.
     num_examples = diagnostics.shape[0] if (n == -1) else n
@@ -30,7 +34,7 @@ def load_data(n = -1):
         j = diagnostics.index[diagnostics["FileName"] == fname].item()
         
         # make one-hot vector for condition names.
-        for b in diagnostics["Beat"][j].split(' '):
+        for b in diagnostics["Rhythm"][j].split(' '):
             if b != "NONE":
                 k = cond_map[b]
                 Y[i,k] = 1
